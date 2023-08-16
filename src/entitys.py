@@ -52,7 +52,7 @@ class Bullet(pg.sprite.Sprite):
         self.movement()
         self.check_collide()
 
-    def movement(self, *args: Any, **kwargs: Any) -> None:
+    def movement(self) -> None:
         if self._direction == LOOK_RIGHT:
             self.rect.x += self._speed
         elif self._direction == LOOK_LEFT:
@@ -67,7 +67,7 @@ class Bullet(pg.sprite.Sprite):
         if self._distance >= 800:
             self.kill()
 
-    def check_collide(self, *args: Any, **kwargs: Any) -> None:
+    def check_collide(self) -> None:
         for en in enemy_gr:
             if self.rect.colliderect(en.rect):
                 en.kill()
@@ -112,7 +112,7 @@ class Player(pg.sprite.Sprite):  # Добавить систему очков
         self.movement()
         self.check_collide()
 
-    def check_keyboard(self, *args: Any, **kwargs: Any) -> None:
+    def check_keyboard(self) -> None:
         keyboard = pg.key.get_pressed()
 
         # Управление персонажем
@@ -163,7 +163,7 @@ class Player(pg.sprite.Sprite):  # Добавить систему очков
                 Bullet(self._look, pos=(self.rect.centerx - 5, self.rect.bottom))
                 pg.time.set_timer(pg.USEREVENT, self.timeDelay, 1)
 
-    def movement(self, *args: Any, **kwargs: Any) -> None:
+    def movement(self) -> None:
         if self._isRight:
             self._look = LOOK_RIGHT
             self.rect.x += self.PLAYER_SPEED
@@ -177,7 +177,7 @@ class Player(pg.sprite.Sprite):  # Добавить систему очков
             self._look = LOOK_DOWN
             self.rect.y += self.PLAYER_SPEED
 
-    def check_collide(self, *args: Any, **kwargs: Any) -> None:
+    def check_collide(self) -> None:
         for en in enemy_gr:
             if self.rect.colliderect(en.rect):
                 self.kill()
