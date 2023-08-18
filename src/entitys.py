@@ -10,6 +10,27 @@ player_gr = pg.sprite.Group()
 chest_gr = pg.sprite.Group()
 
 
+class ScoresSingleton(object):  # Облегчить использование
+    scores: int = 0
+
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(ScoresSingleton, cls).__new__(cls)
+        return cls.instance
+
+    def add(self, n: int = 1) -> None:
+        self.scores += n
+
+    def get(self) -> int:
+        return self.scores
+
+    def nullify(self) -> None:
+        self.scores = 0
+
+
+scores = ScoresSingleton()
+
+
 class Chest(pg.sprite.Sprite):
     _items: Dict[str, int]
 
@@ -68,10 +89,15 @@ class Bullet(pg.sprite.Sprite):
             self.kill()
 
     def check_collide(self) -> None:
+        global scores
+
         for en in enemy_gr:
             if self.rect.colliderect(en.rect):
                 en.kill()
                 self.kill()
+
+                scores.add()
+                print(f'hit: {scores.get()=}')
 
 
 class Enemy(pg.sprite.Sprite):

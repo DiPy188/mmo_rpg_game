@@ -8,7 +8,7 @@ import pygame as pg
 from entitys import Player, Enemy, enemy_gr, bullet_gr, player_gr, get_player, scores
 
 
-def safe_scores(_scores: int,
+def save_scores(_scores: int,
                 _dir: str = '../data/safes/',
                 title: str = 'dev_safe1',
                 mode: str = 'w'):  # В будущем исправить на более универсальную функцию
@@ -18,13 +18,13 @@ def safe_scores(_scores: int,
         raise ValueError(f"Путь сохранения не корректен: {_dir}")
 
     file_name = title + '.csv'
-    full_path = _dir + file_name
+    full_path = _dir + '/' + file_name
 
     if not os.path.isfile(full_path) and mode == 'a':
         raise ValueError(f"Режим записи не корректен: {mode=}")
 
     data = [['scores'],
-            ['scores']]  # Со временем дополнять
+            [f'{_scores}']]  # Со временем дополнять
 
     with open(file=full_path, mode=mode, encoding='utf-8') as f:
         writer = csv.writer(f)
@@ -60,6 +60,10 @@ class App:
                     # Костыль которым я горжусь
                     get_player().isTime = True
                     # player.isTime = True
+
+                elif e.type == pg.KEYDOWN and e.key == pg.K_f:
+                    print('saving')
+                    save_scores(scores.get())
 
             # Update
             player_gr.update()
