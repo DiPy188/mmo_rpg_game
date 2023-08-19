@@ -40,18 +40,24 @@ class App:
     def __init__(self, screen: Tuple[int, int] = (900, 650)):
         pg.init()
         self.screen = pg.display.set_mode(screen)
-        x, y = self.screen.get_rect().center
+        self.x_screen, self.y_screen = self.screen.get_rect().center
         self.clock = pg.time.Clock()
+
+        self.main_menu_result: bool = False
 
     def run(self):
         self._is_run = True
 
-        self.main_scene()
+        flag = self.main_scene()
 
-    def main_scene(self):
+        if flag:
+            self._is_run = True
+            self.game_scene()
+
+    def main_scene(self) -> bool:
         from menu.button import MainMenuButton, button_gr
 
-        MainMenuButton(text='test')
+        MainMenuButton(text='start', action=self.change_to_game_scene)
 
         while self._is_run:
             for e in pg.event.get():
@@ -71,11 +77,13 @@ class App:
             pg.display.flip()
             self.clock.tick(self.FPS)
 
+        return self.main_menu_result
+
     def game_scene(self):
         from entitys import Player, Enemy, enemy_gr, bullet_gr, player_gr, get_player, scores
 
         Player()
-        Enemy((x - 25, y - 50))
+        Enemy((self.x_screen - 25, self.y_screen - 50))
 
         while self._is_run:
             for e in pg.event.get():
@@ -106,6 +114,10 @@ class App:
             self.clock.tick(self.FPS)
 
         pg.quit()
+
+    def change_to_game_scene(self):
+        self._is_run = False
+        self.main_menu_result = True
 
 
 def main():

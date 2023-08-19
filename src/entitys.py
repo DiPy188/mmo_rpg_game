@@ -97,7 +97,6 @@ class Bullet(pg.sprite.Sprite):
                 self.kill()
 
                 scores.add()
-                print(f'hit: {scores.get()=}')
 
 
 class Enemy(pg.sprite.Sprite):
