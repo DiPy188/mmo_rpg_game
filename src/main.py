@@ -5,8 +5,6 @@ import csv
 
 import pygame as pg
 
-from entitys import Player, Enemy, enemy_gr, bullet_gr, player_gr, get_player, scores
-
 
 def save_scores(_scores: int,
                 _dir: str = '../data/safes/',
@@ -45,11 +43,39 @@ class App:
         x, y = self.screen.get_rect().center
         self.clock = pg.time.Clock()
 
-        Player()
-        Enemy((x - 25, y - 50))
-
     def run(self):
         self._is_run = True
+
+        self.main_scene()
+
+    def main_scene(self):
+        from menu.button import MainMenuButton, button_gr
+
+        MainMenuButton(text='test')
+
+        while self._is_run:
+            for e in pg.event.get():
+                if e.type == pg.QUIT:
+                    self._is_run = False
+
+            # Update
+            mouse = pg.mouse.get_pos()
+            is_clicked = pg.mouse.get_pressed()[0]
+
+            button_gr.update(mouse, is_clicked)
+
+            # Render
+            self.screen.fill(pg.Color('black'))
+            button_gr.draw(self.screen)
+
+            pg.display.flip()
+            self.clock.tick(self.FPS)
+
+    def game_scene(self):
+        from entitys import Player, Enemy, enemy_gr, bullet_gr, player_gr, get_player, scores
+
+        Player()
+        Enemy((x - 25, y - 50))
 
         while self._is_run:
             for e in pg.event.get():
