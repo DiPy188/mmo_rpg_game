@@ -1,13 +1,18 @@
 from typing import Tuple
 
 import os.path
+import sys
 import csv
 
 import pygame as pg
 
+from const import *
+
+current_scene: int = SCENE_MAIN_MENU
+
 
 def save_scores(_scores: int,
-                _dir: str = '../data/safes/',
+                _dir: str = '../data/saves/',
                 title: str = 'dev_safe1',
                 mode: str = 'w'):  # В будущем исправить на более универсальную функцию
     _dir = os.path.abspath(_dir)
@@ -31,6 +36,48 @@ def save_scores(_scores: int,
             writer.writerow(row)
 
 
+class MainMenu:
+    def __init__(self, screen: pg.Surface,
+                 center_screen: Tuple[int, int],
+                 clock: pg.time.Clock,
+                 fps: int = 60):
+        self.screen = screen
+        self.center_screen = self.x_screen, self.y_screen = center_screen
+        self.clock = clock
+        self.FPS = fps
+
+        self._is_run = False
+
+    def run(self):
+        from menu.button import MainMenuButton, button_gr
+
+        self._is_run = True
+
+        MainMenuButton(text='start', action=self.start_game)
+
+        while self._is_run:
+            for e in pg.event.get():
+                if e.type == pg.QUIT:
+                    sys.exit(0)
+
+            # Update
+            mouse_pos = pg.mouse.get_pos()
+            mouse_left_click = pg.mouse.get_pressed()[0]
+            button_gr.update(mouse_pos, mouse_left_click)
+
+            # Render
+            self.screen.fill(pg.Color('black'))
+            button_gr.draw(self.screen)
+
+            pg.display.flip()
+            self.clock.tick(self.FPS)
+
+    def start_game(self):
+        global current_scene
+        self._is_run = False
+        current_scene = SCENE_GAME
+
+
 class App:
     """Добавить сохранение прогресса"""
 
@@ -40,7 +87,7 @@ class App:
     def __init__(self, screen: Tuple[int, int] = (900, 650)):
         pg.init()
         self.screen = pg.display.set_mode(screen)
-        self.x_screen, self.y_screen = self.screen.get_rect().center
+        self.center_screen = self.x_screen, self.y_screen = self.screen.get_rect().center
         self.clock = pg.time.Clock()
 
         self.main_menu_result: bool = False
@@ -48,36 +95,25 @@ class App:
     def run(self):
         self._is_run = True
 
-        flag = self.main_scene()
+        while self._is_run:
+            if current_scene == SCENE_MAIN_MENU:
+                self._is_run = True
+                menu = MainMenu(self.screen, self.center_screen, self.clock, self.FPS)
+                menu.run()
+            elif current_scene == SCENE_GAME:
+                self._is_run = True
+                pass  # Загрузить сцену с игрой
+            else:
+                self._is_run = True
+                self.gag_scene()
 
-        if flag:
-            self._is_run = True
-            self.game_scene()
-
-    def main_scene(self) -> bool:
-        from menu.button import MainMenuButton, button_gr
-
-        MainMenuButton(text='start', action=self.change_to_game_scene)
+    def gag_scene(self):
+        self._is_run = True
 
         while self._is_run:
             for e in pg.event.get():
                 if e.type == pg.QUIT:
                     self._is_run = False
-
-            # Update
-            mouse = pg.mouse.get_pos()
-            is_clicked = pg.mouse.get_pressed()[0]
-
-            button_gr.update(mouse, is_clicked)
-
-            # Render
-            self.screen.fill(pg.Color('black'))
-            button_gr.draw(self.screen)
-
-            pg.display.flip()
-            self.clock.tick(self.FPS)
-
-        return self.main_menu_result
 
     def game_scene(self):
         from entitys import Player, Enemy, enemy_gr, bullet_gr, player_gr, get_player, scores
