@@ -28,4 +28,3 @@ class MainMenuButton(pg.sprite.Sprite):
         if mouse[0] in range(self.rect.left, self.rect.right) and \
                 mouse[1] in range(self.rect.top, self.rect.bottom) and is_clicked:
             self.action() if self.action else None
-            print('clicked')
