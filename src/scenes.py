@@ -43,7 +43,8 @@ class MainMenu:
 
         self._is_run = True
 
-        MainMenuButton(text='start', action=lambda: self.change_scene(SCENE_GAME))
+        MainMenuButton(text='start', action=lambda: self.change_scene(SCENE_GAME), pos=(10, 50 * 0 + 10))
+        MainMenuButton(text='settings', pos=(10, 60 * 1 + 10))
 
         while self._is_run:
             for e in pg.event.get():
