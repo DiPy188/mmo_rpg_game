@@ -1,9 +1,5 @@
 from typing import Tuple
 
-import os.path
-import sys
-import csv
-
 import pygame as pg
 
 from const import *

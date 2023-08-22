@@ -53,8 +53,8 @@ class MainMenu:
 
             # Update
             mouse_pos = pg.mouse.get_pos()
-            mouse_left_click = pg.mouse.get_pressed()[0]
-            button_gr.update(mouse_pos, mouse_left_click)
+            is_mouse = pg.mouse.get_pressed()[0]
+            button_gr.update(mouse_pos, is_mouse)
 
             # Render
             self.screen.fill(pg.Color('black'))
@@ -105,11 +105,7 @@ class Game:
 
                 elif e.type == pg.KEYDOWN:
                     match e.key:
-                        case pg.K_f:
-                            print('saving')
-                            save_scores(scores())
                         case pg.K_ESCAPE:
-                            print('pause menu')
                             self.pause_menu(scores())
 
             # Update
@@ -139,6 +135,11 @@ class Game:
 
         self._is_pause = True
 
+        text_writer = pg.font.SysFont(name='arial', size=46, bold=True)
+        text = text_writer.render('Pause Menu', True, pg.Color('white'))
+        text_rect = text.get_rect()
+        text_rect.center = (self.x_screen, 150)
+
         Button(text='Continue', pos=(self.x_screen - 75, self.y_screen - 25), action=self.exit_pause_menu)
         Button(text='Save', pos=(self.x_screen - 75, (self.y_screen - 25) + 100), action=lambda: save_scores(scores))
         Button(text='Exit', pos=(self.x_screen - 75, (self.y_screen - 25) + 200), action=lambda: sys.exit(0))
@@ -148,15 +149,18 @@ class Game:
                 if e.type == pg.QUIT:
                     sys.exit(0)
 
+                elif e.type == pg.KEYDOWN and e.key == pg.K_ESCAPE:
+                    self.exit_pause_menu()
+
             # Update
             mouse_pos = pg.mouse.get_pos()
             is_mouse = pg.mouse.get_pressed()[0]
-
             button_gr.update(mouse_pos, is_mouse)
 
             # Render
             self.screen.fill(pg.Color('black'))
             button_gr.draw(self.screen)
+            self.screen.blit(text, text_rect)
 
             pg.display.flip()
             self.clock.tick(self.FPS)
